@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
+using WebApplication1.Profiles;
 
 namespace WebApplication1;
 
@@ -17,6 +18,9 @@ public static class ServiceRegistration
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         
+        // AutoMapperservices
+
+        services.AddAutoMapper(opt => opt.AddProfile<MapperProfile>());
     }
     
 }

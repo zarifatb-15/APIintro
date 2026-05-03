@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Data;
+using WebApplication1.Dtos.Categories;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers;
@@ -7,7 +9,7 @@ namespace WebApplication1.Controllers;
  [ApiController]
  
  
-public class CategoryController(AppDbContext appDbContext ) : ControllerBase
+public class CategoryController(AppDbContext appDbContext ,IMapper mapper) : ControllerBase
 {
     [HttpGet]
     // GET
@@ -18,23 +20,31 @@ public class CategoryController(AppDbContext appDbContext ) : ControllerBase
         return Ok(categories);
     }
 
-    [HttpGet("{id}")]
-
-    public IActionResult Get(int id)
-    {
-        var category= appDbContext.Categories.Find(id);
-        if (category == null)  return NotFound();
-        
-        return Ok(category);
-    }
+    // [HttpGet("{id}")]
+    //
+    // public IActionResult Get(int id)
+    // {
+    //     var category= appDbContext.Categories.Find(id);
+    //     if (category == null)  return NotFound();
+    //     
+    //     return Ok(category);
+    // }
 
     [HttpPost]
-    public IActionResult Post(Category category)
+    public IActionResult Post(CategoryCreatDto categoryCreatDto)
     {
-        appDbContext.Categories.Add(category);
+         var newCategory = mapper.Map<Category>(categoryCreatDto);
+             // new Category
+        // {
+        //     Name = categoryCreatDto.Name,
+        //     Description = categoryCreatDto.Description,
+        //     CreatedDate = DateTime.Now
+        // };
+    
+        appDbContext.Categories.Add(newCategory);
         appDbContext.SaveChanges();
         // return StatusCode(201, category);
-        return Ok(category);
+        return Ok(newCategory);
     }
 
     [HttpPut("{id}")]

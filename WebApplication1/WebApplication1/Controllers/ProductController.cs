@@ -3,7 +3,8 @@ using WebApplication1.Data;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers;
-
+[Route("api/[controller]")]
+[ApiController]
 public class ProductController (AppDbContext appDbContext): ControllerBase
 {
     [HttpGet]
@@ -30,13 +31,13 @@ public class ProductController (AppDbContext appDbContext): ControllerBase
     {
         var existingProduct=appDbContext.Products.Find(id);
         if(existingProduct==null) return Ok();
-        
+
         existingProduct.Name=product.Name;
         existingProduct.Description=product.Description;
         existingProduct.Price=product.Price;
         existingProduct.CategoryId=product.CategoryId;
         existingProduct.UpdatedDate=DateTime.Now;
-        
+
         appDbContext.SaveChanges();
         return Ok();
     }
@@ -46,7 +47,7 @@ public class ProductController (AppDbContext appDbContext): ControllerBase
     {
         var existingProduct=appDbContext.Products.Find(id);
         if(existingProduct==null) return NotFound();
-        
+
         appDbContext.Products.Remove(existingProduct);
         appDbContext.SaveChanges();
         return Ok();
