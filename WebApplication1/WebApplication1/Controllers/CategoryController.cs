@@ -23,10 +23,39 @@ public class CategoryController(AppDbContext appDbContext ) : ControllerBase
     public IActionResult Get(int id)
     {
         var category= appDbContext.Categories.Find(id);
-        if (category == null)
-        {
-            return NotFound();
-        }
+        if (category == null)  return NotFound();
+        
         return Ok(category);
+    }
+
+    [HttpPost]
+    public IActionResult Post(Category category)
+    {
+        appDbContext.Categories.Add(category);
+        appDbContext.SaveChanges();
+        // return StatusCode(201, category);
+        return Ok(category);
+    }
+
+    [HttpPut("{id}")]
+    public IActionResult Put(int id, Category category)
+    {
+        var existingCategory =appDbContext.Categories.Find(id);
+        if (existingCategory== null) return NotFound();
+        existingCategory.Name = category.Name;
+        existingCategory.Description = category.Description;
+        existingCategory.UpdatedDate = DateTime.Now;
+        appDbContext.SaveChanges();
+        return Ok();
+    }
+
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        var category = appDbContext.Categories.Find(id);
+        if (category==null) return NotFound();
+        appDbContext.Categories.Remove(category);
+        appDbContext.SaveChanges();
+        return Ok();
     }
 }
