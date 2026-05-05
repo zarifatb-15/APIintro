@@ -20,5 +20,23 @@ public class AppDbContext:DbContext
        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
        base.OnModelCreating(modelBuilder);
     }
+
+    public override int SaveChanges()
+    {
+        var entries = ChangeTracker.Entries<BaseEntity>();
+        foreach (var entry in entries)
+        {
+            switch (entry.State)
+            {
+                case EntityState.Added:
+                  entry.Entity.CreatedDate = DateTime.UtcNow;
+                    break;
+                case EntityState.Modified:
+                    entry.Entity.UpdatedDate = DateTime.UtcNow;
+                    break;
+            }
+        }
+        return base.SaveChanges();
+    }
     
 }

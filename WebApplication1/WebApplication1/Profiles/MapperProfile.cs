@@ -8,6 +8,10 @@ public class MapperProfile:Profile
 {
     public MapperProfile()
     {
-        CreateMap<CategoryCreatDto , Category>().ReverseMap();
+        CreateMap<CategoryCreatDto, Category>();
+        CreateMap<Category, CategoryReturnDto>();
+        CreateMap<Product, ProductInCategoryReturnDto>();
+        CreateMap<CategoryUpdateDto, Category>();
+         
     }
 }

@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Dtos.Categories;
 using WebApplication1.Models;
@@ -15,20 +16,23 @@ public class CategoryController(AppDbContext appDbContext ,IMapper mapper) : Con
     // GET
     public IActionResult Get()
     {
-        var categories=appDbContext.Categories.ToList();
+        var categories=appDbContext.Categories
+            .Include(c=>c.Products)
+            .ToList();
+         var categoryDtos = mapper.Map<List<CategoryReturnDto>>(categories);
         // return StatusCode(StatusCodes.Status200OK, "Category Get");
-        return Ok(categories);
+        return Ok(categoryDtos);
     }
 
-    // [HttpGet("{id}")]
-    //
-    // public IActionResult Get(int id)
-    // {
-    //     var category= appDbContext.Categories.Find(id);
-    //     if (category == null)  return NotFound();
-    //     
-    //     return Ok(category);
-    // }
+    [HttpGet("{id}")]
+    
+    public IActionResult Get(int id)
+    {
+        var category= appDbContext.Categories.Find(id);
+        if (category == null)  return NotFound();
+        
+        return Ok(category);
+    }
 
     [HttpPost]
     public IActionResult Post(CategoryCreatDto categoryCreatDto)
@@ -48,13 +52,11 @@ public class CategoryController(AppDbContext appDbContext ,IMapper mapper) : Con
     }
 
     [HttpPut("{id}")]
-    public IActionResult Put(int id, Category category)
+    public IActionResult Put(int id, CategoryUpdateDto categoryUpdateDto)
     {
         var existingCategory =appDbContext.Categories.Find(id);
         if (existingCategory== null) return NotFound();
-        existingCategory.Name = category.Name;
-        existingCategory.Description = category.Description;
-        existingCategory.UpdatedDate = DateTime.Now;
+        mapper.Map(categoryUpdateDto, existingCategory);
         appDbContext.SaveChanges();
         return Ok();
     }

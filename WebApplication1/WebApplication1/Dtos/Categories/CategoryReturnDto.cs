@@ -4,11 +4,15 @@ namespace WebApplication1.Dtos.Categories;
 
 public class CategoryReturnDto
 {
-    public int Id { get; set; }
-    
     public string Name { get; set; }=null!;
 
     public string Description { get; set; } = null!;
     
-    public List<Product> Products { get; set; }=new List<Product>();
+    public List<ProductInCategoryReturnDto>? Products { get; set; }
+}
+
+public class ProductInCategoryReturnDto
+{
+    public string Name { get; set; }=null!;
+    public string Description { get; set; } = null!;
 }

@@ -1,9 +1,7 @@
 namespace WebApplication1.Models;
 
-public class Product
-{
-    public int Id { get; set; }
-    
+public class Product:BaseEntity
+{ 
     public string Name { get; set; }
     public string Description { get; set; } =null!;
     
@@ -11,8 +9,4 @@ public class Product
     
     public int  CategoryId { get; set; }
     public Category Category { get; set; }
-    
-    public DateTime Createddate { get; set; }
-    
-    public DateTime? UpdatedDate { get; set; }
 }
