@@ -23,7 +23,7 @@ public class ProductConfiguration:IEntityTypeConfiguration<Product>
             .HasForeignKey(p => p.CategoryId)
             .OnDelete(DeleteBehavior.Cascade);
         
-        builder.Property(p => p.Createddate)
+        builder.Property(p => p.CreatedDate)
             .IsRequired()
             .HasDefaultValueSql("GETDATE()");
         
