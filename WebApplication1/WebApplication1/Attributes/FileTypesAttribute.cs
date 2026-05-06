@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JuanApp.Attributes
+namespace WebApplication1.Attributes
 {
     public class FileTypesAttribute : ValidationAttribute
     {
