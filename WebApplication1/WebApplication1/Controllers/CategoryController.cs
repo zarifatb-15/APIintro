@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Dtos.Categories;
+using WebApplication1.Extensions;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers;
@@ -16,6 +17,7 @@ public class CategoryController(AppDbContext appDbContext ,IMapper mapper) : Con
     // GET
     public IActionResult Get()
     {
+        var context = HttpContext.Request;
         var categories=appDbContext.Categories
             .Include(c=>c.Products)
             .ToList();
@@ -44,6 +46,7 @@ public class CategoryController(AppDbContext appDbContext ,IMapper mapper) : Con
         //     Description = categoryCreatDto.Description,
         //     CreatedDate = DateTime.Now
         // };
+        // newCategory.ImageUrl = categoryCreatDto.Photo.SaveFile("wwwroot/images/");
     
         appDbContext.Categories.Add(newCategory);
         appDbContext.SaveChanges();

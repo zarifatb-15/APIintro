@@ -1,6 +1,7 @@
 using AutoMapper;
 using WebApplication1.Dtos.Categories;
 using WebApplication1.Dtos.Product;
+using WebApplication1.Extensions;
 using WebApplication1.Models;
 
 namespace WebApplication1.Profiles;
@@ -9,8 +10,10 @@ public class MapperProfile:Profile
 {
     public MapperProfile()
     {
-        CreateMap<CategoryCreatDto, Category>();
-        CreateMap<Category, CategoryReturnDto>();
+        CreateMap<CategoryCreatDto, Category>()
+            .ForMember(dest=>dest.ImageUrl,opt=>opt.MapFrom(src=>src.Photo.SaveFile("wwwroot/images/")));
+        CreateMap<Category, CategoryReturnDto>()
+            .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => "http://localhost:5274/images/" + src.ImageUrl));
         CreateMap<Product, ProductInCategoryReturnDto>();
         CreateMap<CategoryUpdateDto, Category>();
         CreateMap<ProductCreateDto, Product>();
