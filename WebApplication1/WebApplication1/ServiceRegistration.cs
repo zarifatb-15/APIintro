@@ -18,9 +18,12 @@ public static class ServiceRegistration
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         
+        // httpcontextaccessor
+        services.AddHttpContextAccessor();
+        
+        
         // AutoMapperservices
-
-        services.AddAutoMapper(opt => opt.AddProfile<MapperProfile>());
+        services.AddAutoMapper(opt => opt.AddProfile(new MapperProfile(new HttpContextAccessor())));
     }
     
 }
