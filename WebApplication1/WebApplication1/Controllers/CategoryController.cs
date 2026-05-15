@@ -43,6 +43,11 @@ public class CategoryController(AppDbContext appDbContext,
     [HttpPost]
     public IActionResult Post([FromForm]CategoryCreatDto categoryCreatDto)
     {
+        var validationResult = createValidator.Validate(categoryCreatDto);
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.Errors);
+        }
          var newCategory = mapper.Map<Category>(categoryCreatDto);
              // new Category
         // {
