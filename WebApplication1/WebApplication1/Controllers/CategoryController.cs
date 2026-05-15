@@ -37,7 +37,7 @@ public class CategoryController(AppDbContext appDbContext ,IMapper mapper) : Con
     }
 
     [HttpPost]
-    public IActionResult Post(CategoryCreatDto categoryCreatDto)
+    public IActionResult Post([FromForm]CategoryCreatDto categoryCreatDto)
     {
          var newCategory = mapper.Map<Category>(categoryCreatDto);
              // new Category
@@ -55,7 +55,7 @@ public class CategoryController(AppDbContext appDbContext ,IMapper mapper) : Con
     }
 
     [HttpPut("{id}")]
-    public IActionResult Put(int id, CategoryUpdateDto categoryUpdateDto)
+    public IActionResult Put([FromRoute]int id, [FromBody]CategoryUpdateDto categoryUpdateDto)
     {
         var existingCategory =appDbContext.Categories.Find(id);
         if (existingCategory== null) return NotFound();
