@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Profiles;
@@ -23,7 +24,9 @@ public static class ServiceRegistration
         
         
         // AutoMapperservices
-        services.AddAutoMapper(opt => opt.AddProfile(new MapperProfile(new HttpContextAccessor())));
+        services.AddAutoMapper(opt => 
+            opt.AddProfile(new MapperProfile(new HttpContextAccessor())));
+        services.AddValidatorsFromAssemblyContaining<Program>();
     }
     
 }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
@@ -11,7 +12,10 @@ namespace WebApplication1.Controllers;
  [ApiController]
  
  
-public class CategoryController(AppDbContext appDbContext ,IMapper mapper) : ControllerBase
+public class CategoryController(AppDbContext appDbContext, 
+    IMapper mapper,
+    IValidator<CategoryCreatDto> createValidator
+    ) : ControllerBase
 {
     [HttpGet]
     // GET
