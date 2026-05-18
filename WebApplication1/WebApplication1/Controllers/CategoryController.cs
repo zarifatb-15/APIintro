@@ -46,7 +46,11 @@ public class CategoryController(AppDbContext appDbContext,
         var validationResult = createValidator.Validate(categoryCreatDto);
         if (!validationResult.IsValid)
         {
-            return BadRequest(validationResult.Errors);
+            return BadRequest(validationResult.Errors.Select(error => new
+            {
+                error.PropertyName,
+                error.ErrorMessage
+            }));
         }
          var newCategory = mapper.Map<Category>(categoryCreatDto);
              // new Category
