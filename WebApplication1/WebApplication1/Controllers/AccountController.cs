@@ -1,3 +1,4 @@
+using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,8 @@ public class AccountController
     (
         IValidator<RegisterDto> registerValidator,
         UserManager<AppUser> userManager,
-        RoleManager<IdentityRole> roleManager
+        RoleManager<IdentityRole> roleManager,
+        IMapper mapper
     ) : ControllerBase
 {
     [HttpPost("register")]
@@ -24,12 +26,11 @@ public class AccountController
         var user = await userManager.FindByNameAsync(registerDto.UserName);
         if(user is not null)
             return BadRequest("Username already exists");
-        user = new AppUser()
-        {
-            FullName = registerDto.FullName,
-            UserName = registerDto.UserName,
-            Email = registerDto.Email
-        };
+        user = mapper.Map<AppUser>(registerDto);
+        
+        var result = await userManager.CreateAsync(user, registerDto.Password);
+        if (!result.Succeeded)
+            return BadRequest(result.Errors);
         return Ok();
     }
 }

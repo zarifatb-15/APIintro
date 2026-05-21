@@ -1,6 +1,7 @@
 using AutoMapper;
 using WebApplication1.Dtos.Categories;
 using WebApplication1.Dtos.Product;
+using WebApplication1.Dtos.UserDtos;
 using WebApplication1.Extensions;
 using WebApplication1.Models;
 
@@ -32,6 +33,7 @@ public class MapperProfile:Profile
         CreateMap<Product, ProductReturnDto>();
         CreateMap<Category, CategoryInProductReturnDto>();
         // .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
+        CreateMap<RegisterDto, AppUser>();
 
     }
 }
