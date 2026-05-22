@@ -31,6 +31,17 @@ public class AccountController
         var result = await userManager.CreateAsync(user, registerDto.Password);
         if (!result.Succeeded)
             return BadRequest(result.Errors);
+        // todo: assing role to user
+        return Ok();
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> CreateRole()
+    {
+      
+       await roleManager.CreateAsync(new IdentityRole("Member"));
+       await roleManager.CreateAsync(new IdentityRole("Admin"));
+     
         return Ok();
     }
 }
