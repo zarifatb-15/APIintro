@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using WebApplication1.Profiles;
+using WebApplication1.Services;
 
 namespace WebApplication1;
 
@@ -50,7 +51,7 @@ public static class ServiceRegistration
         //     var dbContext = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
         //     dbContext.Database.Migrate();
         // }
-        
+        services.AddScoped<JwtService>();
         services.AddAuthentication(x =>
                 {
                     x.DefaultAuthenticateScheme=JwtBearerDefaults.AuthenticationScheme;
@@ -61,6 +62,7 @@ public static class ServiceRegistration
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    ClockSkew = TimeSpan.Zero,
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,

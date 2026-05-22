@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using WebApplication1.Dtos.UserDtos;
 using WebApplication1.Models;
+using WebApplication1.Services;
 
 namespace WebApplication1.Controllers;
 
@@ -18,6 +19,7 @@ public class AccountController(
     UserManager<AppUser> userManager,
     RoleManager<IdentityRole> roleManager,
     IConfiguration config,
+    JwtService jwtService,
     IMapper mapper
 ) : ControllerBase
 {
@@ -53,37 +55,17 @@ public class AccountController(
             return BadRequest("Invalid username or password");
         // todo: generate token 
         // claims
-        
+
         var roles = await userManager.GetRolesAsync(user);
-        var claims = new  List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim("FullName", user.FullName),
-            
-        };
-        
-        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
-        var key=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        
-        var jwtSecurityToken=new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(
-            issuer: config["Jwt:Issuer"],
-            audience: config["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.Now.AddHours(3),
-            signingCredentials: creds
-        );
-        // var token= new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-        var token= new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-        
+
+
         return Ok(
             new
             {
-                token,
+                token = jwtService.GenerateToken(user, roles.ToList(), config)
             });
 
-        // [HttpGet]
+    // [HttpGet]
         // public async Task<IActionResult> CreateRole()
         // {
         //   
