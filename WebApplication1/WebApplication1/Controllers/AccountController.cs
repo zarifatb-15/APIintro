@@ -1,8 +1,11 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using WebApplication1.Dtos.UserDtos;
 using WebApplication1.Models;
 
@@ -14,6 +17,7 @@ public class AccountController(
     IValidator<RegisterDto> registerValidator,
     UserManager<AppUser> userManager,
     RoleManager<IdentityRole> roleManager,
+    IConfiguration config,
     IMapper mapper
 ) : ControllerBase
 {
@@ -60,8 +64,24 @@ public class AccountController(
         };
         
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+        var key=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         
-        return Ok("User logged in successfully");
+        var jwtSecurityToken=new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(
+            issuer: config["Jwt:Issuer"],
+            audience: config["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.Now.AddHours(3),
+            signingCredentials: creds
+        );
+        // var token= new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+        var token= new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+        
+        return Ok(
+            new
+            {
+                token,
+            });
 
         // [HttpGet]
         // public async Task<IActionResult> CreateRole()

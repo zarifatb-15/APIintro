@@ -1,6 +1,9 @@
+using System.Text;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using WebApplication1.Profiles;
@@ -47,6 +50,28 @@ public static class ServiceRegistration
         //     var dbContext = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
         //     dbContext.Database.Migrate();
         // }
+        
+        services.AddAuthentication(x =>
+                {
+                    x.DefaultAuthenticateScheme=JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultScheme=JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme=JwtBearerDefaults.AuthenticationScheme;
+                })
+            .AddJwtBearer("Bearer", options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = config["Jwt:Issuer"],
+                    ValidAudience = config["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]))
+                };
+            });
+        services.AddAuthorization();
+
     }
     
 }

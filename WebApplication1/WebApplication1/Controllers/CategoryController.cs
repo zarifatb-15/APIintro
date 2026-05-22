@@ -1,5 +1,6 @@
 using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
@@ -10,6 +11,7 @@ using WebApplication1.Models;
 namespace WebApplication1.Controllers;
  [Route("api/[controller]")]
  [ApiController]
+ [Authorize]
  
  
 public class CategoryController(AppDbContext appDbContext, 
