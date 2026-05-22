@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
@@ -6,42 +7,70 @@ using WebApplication1.Dtos.UserDtos;
 using WebApplication1.Models;
 
 namespace WebApplication1.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
-public class AccountController
-    (
-        IValidator<RegisterDto> registerValidator,
-        UserManager<AppUser> userManager,
-        RoleManager<IdentityRole> roleManager,
-        IMapper mapper
-    ) : ControllerBase
+public class AccountController(
+    IValidator<RegisterDto> registerValidator,
+    UserManager<AppUser> userManager,
+    RoleManager<IdentityRole> roleManager,
+    IMapper mapper
+) : ControllerBase
 {
     [HttpPost("register")]
 
-    public async Task <IActionResult> Register([FromBody] RegisterDto registerDto)
+    public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
     {
         var validationResult = registerValidator.Validate(registerDto);
         if (!validationResult.IsValid)
             return BadRequest(validationResult.Errors);
         var user = await userManager.FindByNameAsync(registerDto.UserName);
-        if(user is not null)
+        if (user is not null)
             return BadRequest("Username already exists");
         user = mapper.Map<AppUser>(registerDto);
-        
+
         var result = await userManager.CreateAsync(user, registerDto.Password);
         if (!result.Succeeded)
             return BadRequest(result.Errors);
         // todo: assing role to user
-        return Ok();
+        userManager.AddToRoleAsync(user, "Member");
+
+        return Ok("User created successfully");
     }
-    
-    [HttpGet]
-    public async Task<IActionResult> CreateRole()
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
-      
-       await roleManager.CreateAsync(new IdentityRole("Member"));
-       await roleManager.CreateAsync(new IdentityRole("Admin"));
-     
-        return Ok();
+        var user = await userManager.FindByNameAsync(loginDto.UserName);
+        if (user is null)
+            return BadRequest("Invalid username or password");
+        var result = await userManager.CheckPasswordAsync(user, loginDto.Password);
+        if (!result)
+            return BadRequest("Invalid username or password");
+        // todo: generate token 
+        // claims
+        
+        var roles = await userManager.GetRolesAsync(user);
+        var claims = new  List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim("FullName", user.FullName),
+            
+        };
+        
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+        
+        return Ok("User logged in successfully");
+
+        // [HttpGet]
+        // public async Task<IActionResult> CreateRole()
+        // {
+        //   
+        //    await roleManager.CreateAsync(new IdentityRole("Member"));
+        //    await roleManager.CreateAsync(new IdentityRole("Admin"));
+        //  
+        //     return Ok();
+        // }
     }
 }

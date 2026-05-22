@@ -39,6 +39,14 @@ public static class ServiceRegistration
                 opt.Password.RequiredLength = 6;
             })
             .AddEntityFrameworkStores<AppDbContext>();
+        
+        // migrate database
+
+        // using (var serviceScope = services.BuildServiceProvider().CreateScope())
+        // {
+        //     var dbContext = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+        //     dbContext.Database.Migrate();
+        // }
     }
     
 }
