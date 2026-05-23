@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -39,12 +40,12 @@ public class AccountController(
         if (!result.Succeeded)
             return BadRequest(result.Errors);
         // todo: assing role to user
-        userManager.AddToRoleAsync(user, "Member");
+        await userManager.AddToRoleAsync(user, "Member");
 
         return Ok("User created successfully");
     }
 
-    [HttpPost("login")]
+       [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
         var user = await userManager.FindByNameAsync(loginDto.UserName);
@@ -64,8 +65,9 @@ public class AccountController(
             {
                 token = jwtService.GenerateToken(user, roles.ToList(), config)
             });
+    }
 
-    // [HttpGet]
+        // [HttpGet("create-role")]
         // public async Task<IActionResult> CreateRole()
         // {
         //   
@@ -74,5 +76,23 @@ public class AccountController(
         //  
         //     return Ok();
         // }
+    
+       [HttpGet("profile")]
+        [Authorize]
+
+    public IActionResult Profile()
+    {
+        var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userName=User.Identity?.Name;
+        var fullName=User.FindFirstValue("FullName");
+        var roles=User.Claims.Where(c=>c.Type==ClaimTypes.Role).Select(c=>c.Value).ToList();
+
+        return Ok(
+            new
+            {
+                fullName,
+                userName,
+                roles
+            });
     }
 }
