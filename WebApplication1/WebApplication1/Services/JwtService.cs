@@ -8,14 +8,14 @@ namespace WebApplication1.Services;
 
 public class JwtService
 {
-    public string GenerateToken(AppUser user, List<string> roles, IConfiguration config)
+    public string GenerateToken(AppUser user, IList<string> roles, IConfiguration config)
     {
         var claims = new  List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.UserName),
             new Claim("FullName", user.FullName),
-            
+
         };
         
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));

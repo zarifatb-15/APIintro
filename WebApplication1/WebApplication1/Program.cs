@@ -10,7 +10,6 @@ var config=builder.Configuration;
 
 builder.Services.AddServices(config);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
@@ -22,11 +21,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.MapScalarApiReference();
-}
+// Scalar
+// if (app.Environment.IsDevelopment())
+// {
+//     app.MapOpenApi();
+//     app.MapScalarApiReference();
+// }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

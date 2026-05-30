@@ -63,7 +63,7 @@ public class AccountController(
         return Ok(
             new
             {
-                token = jwtService.GenerateToken(user, roles.ToList(), config)
+                token = jwtService.GenerateToken(user, roles, config)
             });
     }
 
@@ -77,9 +77,8 @@ public class AccountController(
         //     return Ok();
         // }
     
-       [HttpGet("profile")]
-        [Authorize]
-
+    [HttpGet("profile")] 
+    [Authorize]
     public IActionResult Profile()
     {
         var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
